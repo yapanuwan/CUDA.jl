@@ -17,7 +17,7 @@ import RandomNumbers
              }
              attributes #0 = { alwaysinline }
           """, "entry"), LLVMPtr{UInt32, AS.Shared}, Tuple{})
-    CuDeviceArray((32,), ptr)
+    CuDeviceArray{UInt32,1,AS.Shared}((32,), ptr)
 end
 
 # shared memory with per-warp counters, incremented when generating numbers
@@ -31,7 +31,7 @@ end
              }
              attributes #0 = { alwaysinline }
           """, "entry"), LLVMPtr{UInt32, AS.Shared}, Tuple{})
-    CuDeviceArray((32,), ptr)
+    CuDeviceArray{UInt32,1,AS.Shared}((32,), ptr)
 end
 
 @device_override Random.make_seed() = clock(UInt32)
@@ -190,7 +190,11 @@ end
 for var in [:ki, :wi, :fi, :ke, :we, :fe]
     val = getfield(Random, var)
     gpu_var = Symbol("gpu_$var")
-    @eval @inline $gpu_var() = CuDeviceArray($(size(val)), $(emit_constant_array(var, val)))
+    @eval @inline function $gpu_var()
+        T = $(eltype(val))
+        N = $(ndims(val))
+        CuDeviceArray{T,N,AS.Constant}($(size(val)), $(emit_constant_array(var, val)))
+    end
 end
 
 ## randn
