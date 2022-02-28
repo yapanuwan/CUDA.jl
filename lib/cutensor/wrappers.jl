@@ -58,8 +58,21 @@ const scalar_types = Dict(
     (Float64, Float32)          => Float64,
     (ComplexF32, ComplexF32)    => ComplexF32,
     (ComplexF64, ComplexF64)    => ComplexF64,
-    (ComplexF64, ComplexF32)    => ComplexF64)
-
+    (ComplexF64, ComplexF32)    => ComplexF64,
+    # find a better way to do this
+    (Float16, CUTENSOR_COMPUTE_32F)     => Float32,
+    #(CUDA_R_16BF, CUTENSOR_COMPUTE_32F) => Float32,
+    (Float32, CUTENSOR_COMPUTE_32F)     => Float32,
+    (Float32, CUTENSOR_COMPUTE_TF32)    => Float32,
+    (Float32, CUTENSOR_COMPUTE_16BF)    => Float32,
+    (Float32, CUTENSOR_COMPUTE_16F)     => Float32,
+    (Float64, CUTENSOR_COMPUTE_64F)     => Float64,
+    (Float64, CUTENSOR_COMPUTE_32F)     => Float64,
+    (ComplexF32, CUTENSOR_COMPUTE_32F)  => ComplexF32,
+    (ComplexF32, CUTENSOR_COMPUTE_TF32) => ComplexF32,
+    (ComplexF64, CUTENSOR_COMPUTE_64F)  => ComplexF64,  
+    (ComplexF64, CUTENSOR_COMPUTE_32F)  => ComplexF64)
+    
 Base.cconvert(::Type{Ptr{cutensorTensorDescriptor_t}}, obj::CuTensorDescriptor) = obj.desc
 
 function elementwiseTrinary!(
