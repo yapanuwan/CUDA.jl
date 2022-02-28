@@ -378,7 +378,7 @@ function reduction!(
     return C
 end
 
-function cutensorComputeType(T::cutensorComputeType_t) = T
+cutensorComputeType(T::cutensorComputeType_t) = T
 
 function cutensorComputeType(T::DataType)
     if T == Float32
