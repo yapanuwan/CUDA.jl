@@ -258,7 +258,7 @@ function contraction!(
         opOut::cutensorOperator_t;
         pref::cutensorWorksizePreference_t=CUTENSOR_WORKSPACE_RECOMMENDED,
         algo::cutensorAlgo_t=CUTENSOR_ALGO_DEFAULT,
-        compute_type::Type=eltype(C), plan::Union{CuTensorContractionPlan, Nothing}=nothing)
+        compute_type::Union{Type,cutensorComputeType_t}=eltype(C), plan::Union{CuTensorContractionPlan, Nothing}=nothing)
 
     # XXX: save these as parameters of the plan?
     output_type = eltype(C)
@@ -288,7 +288,7 @@ function plan_contraction(
         @nospecialize(C::Union{CuArray, Array}), Cinds::ModeType, opC::cutensorOperator_t,
         opOut::cutensorOperator_t;
         pref::cutensorWorksizePreference_t=CUTENSOR_WORKSPACE_RECOMMENDED,
-        algo::cutensorAlgo_t=CUTENSOR_ALGO_DEFAULT, compute_type::Type=eltype(C))
+        algo::cutensorAlgo_t=CUTENSOR_ALGO_DEFAULT, compute_type::Union{Type,cutensorComputeType_t}=eltype(C))
     !is_unary(opA)    && throw(ArgumentError("opA must be a unary op!"))
     !is_unary(opB)    && throw(ArgumentError("opB must be a unary op!"))
     !is_unary(opC)    && throw(ArgumentError("opC must be a unary op!"))
@@ -377,6 +377,8 @@ function reduction!(
 
     return C
 end
+
+function cutensorComputeType(T::cutensorComputeType_t) = T
 
 function cutensorComputeType(T::DataType)
     if T == Float32
